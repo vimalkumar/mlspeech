@@ -1,3 +1,9 @@
 # All files or folders ending with .tmp will be ignored
 *\.tmp
 *\.pyc
+#emacs temp file list
+*#
+.#*
+#end emacs temp file list
+
+
