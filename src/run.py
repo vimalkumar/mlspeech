@@ -14,8 +14,10 @@ def All(folder, ratio, files):
     ConvertWavtoOut(files[f], folder, f + 1, float(ratio))
 
   system("rm %s/all.train %s/all.test %s/all.model %s/all.out"%(folder, folder, folder, folder))
-  system("cat %s/*.train > %s/all.train"%(folder, folder))
-  system("cat %s/*.test > %s/all.test"%(folder, folder))
+  system("cat %s/*.train > %s/all.train.nonscaled"%(folder, folder))
+  system("cat %s/*.test > %s/all.test.nonscaled"%(folder, folder))
+  system("svm-scale %s/all.train.nonscaled > %s/all.train"%(folder,folder))
+  system("svm-scale %s/all.test.nonscaled > %s/all.test"%(folder,folder))
   system("svm-train %s/all.train %s/all.model"%(folder, folder))
   system("svm-predict %s/all.test %s/all.model %s/all.out"%(folder, folder, folder))
 
