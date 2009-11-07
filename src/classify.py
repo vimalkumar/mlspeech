@@ -14,6 +14,7 @@ def WriteClassify(wave):
     y = x + 1
     Write("%d.wav"%y, wave[x])
 
+# classify.py wavefile svm-predict-output-file
 if __name__ == "__main__":
   import sys
   wave = Read(sys.argv[1])

@@ -5,8 +5,8 @@ def system(x):
   os.system("echo '" + x + "'")
 
 def ConvertWavtoOut(wavefile, folder, label, ratio):
-  system("./fftgen.py %s %s/%d.out %d"%(wavefile, folder, label, label))
-  system("./randpick.py %s/%d.out %f %s/%d.train %s/%d.test"%(folder, label, ratio, folder, label, folder, label))
+  system("fftgen.py %s %s/%d.out %d"%(wavefile, folder, label, label))
+  system("randpick.py %s/%d.out %f %s/%d.train %s/%d.test"%(folder, label, ratio, folder, label, folder, label))
 
 def All(folder, ratio, files):
   system("mkdir -p %s"%folder)
@@ -18,7 +18,8 @@ def All(folder, ratio, files):
   system("cat %s/*.test > %s/all.test"%(folder, folder))
   system("svm-train %s/all.train %s/all.model"%(folder, folder))
   system("svm-predict %s/all.test %s/all.model %s/all.out"%(folder, folder, folder))
-  
+
+#usage run.py [-n for dry run] scratchfolder ratiofortrain:test listoffiles
 if __name__ == "__main__":
   import sys
   if sys.argv[1] == "-n":
