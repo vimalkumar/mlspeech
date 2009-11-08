@@ -1,32 +1,30 @@
 #!/usr/bin/python
-import os
 
-def system(x):
-  os.system("echo '" + x + "'")
+from common import *
 
-def ConvertWavtoOut(wavefile, folder, label, ratio):
-  system("fftgen.py %s %s/%d.out %d"%(wavefile, folder, label, label))
-  system("randpick.py %s/%d.out %f %s/%d.train %s/%d.test"%(folder, label, ratio, folder, label, folder, label))
+def All(folder, train_files,test_files):
+  setup_tmp_folder(folder)
+  for f in train_files:
+    label = infer_label_from_file_name(f) 
+    create_labeled_samples(f,folder,train_fname(f),label)
 
-def All(folder, ratio, files):
-  system("mkdir -p %s"%folder)
-  for f in range(len(files)):
-    ConvertWavtoOut(files[f], folder, f + 1, float(ratio))
+  for f in test_files:
+    label = infer_label_from_file_name(f) 
+    create_labeled_samples(f,folder,test_fname(f),label)
 
-  system("rm %s/all.train %s/all.test %s/all.model %s/all.out"%(folder, folder, folder, folder))
-  system("cat %s/*.train > %s/all.train.nonscaled"%(folder, folder))
-  system("cat %s/*.test > %s/all.test.nonscaled"%(folder, folder))
-  system("svm-scale %s/all.train.nonscaled > %s/all.train"%(folder,folder))
-  system("svm-scale %s/all.test.nonscaled > %s/all.test"%(folder,folder))
-  system("svm-train %s/all.train %s/all.model"%(folder, folder))
-  system("svm-predict %s/all.test %s/all.model %s/all.out"%(folder, folder, folder))
+  train_and_test(folder)
 
-#usage run.py [-n for dry run] scratchfolder ratiofortrain:test listoffiles
+
 if __name__ == "__main__":
   import sys
-  if sys.argv[1] == "-n":
-    sys.argv = sys.argv[1:]
-  else:
-    system = os.system
 
-  All(sys.argv[1], sys.argv[2], sys.argv[3:])
+  # Parse options
+  usage = "[-n]? tmpfolder --train wavfiles+ --test wavfiles+"
+  argv = process_args(sys.argv,5,["--train","--test"],usage) 
+  train_idx = argv.index("--train")
+  test_idx = argv.index("--test")  
+  folder = argv[1]
+  train_files = argv[train_idx+1:test_idx]
+  test_files = argv[test_idx+1:]
+
+  All(folder,train_files,test_files)
