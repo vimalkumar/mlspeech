@@ -63,7 +63,8 @@ def test_fname(orig_file):
     return tmp_file_prefix(orig_file) + ".test"
 
 def create_labeled_samples(wavefile,folder,sample_file,label):
-    execute("fftgen.py %s %s/%s %d"%(wavefile, folder,sample_file, label))
+   #execute("fftgen.py %s %s/%s %d"%(wavefile, folder,sample_file, label))
+   execute("melgen.py %s %s/%s %s"%(wavefile, folder,sample_file, label))
 
 # Main training and testing script
 # Input
@@ -74,11 +75,11 @@ def create_labeled_samples(wavefile,folder,sample_file,label):
 #      test result: all.out, accuracy is printed in stdout
 #      svm movel: all.model
 def train_and_test(folder):
-  execute("cat %s/*.train > %s/all.train.nonscaled"%(folder, folder))
-  execute("cat %s/*.test > %s/all.test.nonscaled"%(folder, folder))
-  execute("svm-scale %s/all.train.nonscaled > %s/all.train"%(folder,folder))
-  execute("svm-scale %s/all.test.nonscaled > %s/all.test"%(folder,folder))
-  execute("svm-train %s/all.train %s/all.model"%(folder, folder))
-  execute("svm-predict %s/all.test %s/all.model %s/all.out"%(folder, folder, folder))
+  execute("cat %s/*.train > %s/all.train.nonscaled.libsvm"%(folder, folder))
+  execute("cat %s/*.test > %s/all.test.nonscaled.libsvm"%(folder, folder))
+  execute("svm-scale %s/all.train.nonscaled.libsvm > %s/all.train.libsvm"%(folder,folder))
+  execute("svm-scale %s/all.test.nonscaled.libsvm > %s/all.test.libsvm"%(folder,folder))
+  execute("svm-train %s/all.train.libsvm %s/all.model"%(folder, folder))
+  execute("svm-predict %s/all.test.libsvm %s/all.model %s/all.out"%(folder, folder, folder))
 
 
